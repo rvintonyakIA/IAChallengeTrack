@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types'
 
-import styles from './App.scss'
+import styles from './App.module.scss'
 const App = ({ title }) => {
   return (
-    <div className={ styles.app }>{title}</div>
+    <>
+      <div className={ styles.tagContainer }>{title}</div>
+    </>
   )
 }
 

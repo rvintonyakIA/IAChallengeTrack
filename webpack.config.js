@@ -2,6 +2,17 @@ const webpack = require('webpack')
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
+const cssLoader = {
+  loader: 'css-loader',
+  options: {
+    modules: {
+      localIdentName: '[local]-[hash:base64:5]'
+    },
+    importLoaders: 1,
+    localsConvention: 'camelCase'
+  }
+}
+
 module.exports = {
   entry: path.resolve(__dirname, './src/index.js'),
   module: {
@@ -12,49 +23,27 @@ module.exports = {
         use: ['babel-loader'],
       },
       {
-        // scss
-        test: /\.scss$/,
-        use: [
-          'style-loader',
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              esModule: false,
-            },
-          },
-          {
-            loader: 'css-loader',
-            options: { sourceMap: true },
-          },
-          {
-            loader: 'sass-loader',
-            options: { sourceMap: true },
-          },
+        test: /\.(sa|sc|c)ss$/,
+        exclude: [
+          /storybook/
         ],
-      },
-      {
-        // css
-        test: /\.css$/,
-        use: [
-          'style-loader',
+        oneOf: [
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              esModule: false,
-            },
+            test: /\.module\.s?css$/,
+            use: [
+              MiniCssExtractPlugin.loader,
+              cssLoader,
+              'sass-loader'
+            ]
           },
           {
-            loader: 'css-loader',
-            options: { sourceMap: true },
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              sourceMap: true,
-              config: { path: 'src/js/postcss.config.js' },
-            },
-          },
-        ],
+            use: [
+              MiniCssExtractPlugin.loader,
+              'css-loader',
+              'sass-loader'
+            ],
+          }
+        ]
       },
       {
         test: /\.(jpg|png|woff|woff2|eot|ttf|svg)$/,
@@ -76,7 +65,10 @@ module.exports = {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js',
   },
-  plugins: [new MiniCssExtractPlugin(), new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    new MiniCssExtractPlugin(),
+    new webpack.HotModuleReplacementPlugin()
+  ],
   devServer: {
     contentBase: path.resolve(__dirname, './dist'),
     hot: true,
