@@ -1,0 +1,17 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "targets": {
+        "browsers": ["last 2 versions", "IE 11"]
+      }
+    }],
+    "@babel/preset-react",
+    ["react-app", { "typescript": false, "runtime": "automatic" }]
+  ],
+
+  "plugins": [
+    "syntax-class-properties",
+    "@babel/plugin-proposal-optional-chaining",
+    "@babel/plugin-proposal-nullish-coalescing-operator"
+  ]
+}
