@@ -1,76 +1,35 @@
-const webpack = require('webpack')
-const path = require('path')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+var path = require('path');
+var fs = require('fs');
 
-const cssLoader = {
-  loader: 'css-loader',
-  options: {
-    modules: {
-      localIdentName: '[local]-[hash:base64:5]'
-    },
-    importLoaders: 1,
-    localsConvention: 'camelCase'
-  }
-}
+var nodeModules = {};
+fs.readdirSync('node_modules')
+  .filter(function(x) {
+    return ['.bin'].indexOf(x) === -1;
+  })
+  .forEach(function(mod) {
+    nodeModules[mod] = 'commonjs ' + mod;
+  });
+
+// Manually add the native Phantom JS modules used in the project
+nodeModules['webpage'] = 'commonjs webpage';
 
 module.exports = {
-  entry: path.resolve(__dirname, './src/index.js'),
+  entry: './src/index.js',
+  target: 'node',
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: './build.js'
+  },
+  externals: nodeModules,
+  node: {
+    __dirname: true
+  },
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: ['babel-loader'],
-      },
-      {
-        test: /\.(sa|sc|c)ss$/,
-        exclude: [
-          /storybook/
-        ],
-        oneOf: [
-          {
-            test: /\.module\.s?css$/,
-            use: [
-              MiniCssExtractPlugin.loader,
-              cssLoader,
-              'sass-loader'
-            ]
-          },
-          {
-            use: [
-              MiniCssExtractPlugin.loader,
-              'css-loader',
-              'sass-loader'
-            ],
-          }
-        ]
-      },
-      {
-        test: /\.(jpg|png|woff|woff2|eot|ttf|svg)$/,
-        exclude: [
-          /storybook/
-        ],
-        loader: 'url-loader',
-        options: {
-          limit: 100000,
-          name: '[name].[ext]'
-        }
+        test: /\.js$/,
+        loader: 'babel-loader'
       }
-    ],
-  },
-  resolve: {
-    extensions: ['*', '.js', '.jsx'],
-  },
-  output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.js',
-  },
-  plugins: [
-    new MiniCssExtractPlugin(),
-    new webpack.HotModuleReplacementPlugin()
-  ],
-  devServer: {
-    contentBase: path.resolve(__dirname, './dist'),
-    hot: true,
-  },
+    ]
+  }
 }

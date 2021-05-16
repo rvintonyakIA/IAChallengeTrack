@@ -4,15 +4,10 @@
       "targets": {
         "browsers": ["last 2 versions", "IE 11"]
       }
-    }],
-    ["@babel/preset-react", { "runtime": "automatic" }],
-    ["react-app", { "typescript": false, "runtime": "automatic" }]
+    }]
   ],
 
   "plugins": [
-    ["@babel/plugin-transform-react-jsx", {
-      "runtime": "automatic"
-    }],
     "syntax-class-properties",
     "@babel/plugin-proposal-optional-chaining",
     "@babel/plugin-proposal-nullish-coalescing-operator"
